@@ -11,12 +11,13 @@ use Illuminate\Support\Str;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Section;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\CategoryResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\CategoryResource\RelationManagers;
-use Filament\Tables\Columns\TextColumn;
+use App\Filament\Resources\CategoryResource\RelationManagers\PostsRelationManager;
 
 class CategoryResource extends Resource
 {
@@ -29,7 +30,7 @@ class CategoryResource extends Resource
         return $form
             ->schema([
                 Section::make()->schema([
-                    TextInput::make('name')->required()->reactive()
+                    TextInput::make('name')->reactive()
                     ->afterStateUpdated(function ($set, $state) {
                         $set('slug', Str::slug($state));
                     })->required(),
@@ -62,7 +63,7 @@ class CategoryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            PostsRelationManager::class
         ];
     }
 

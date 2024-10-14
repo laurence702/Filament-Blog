@@ -1,42 +1,28 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\CategoryResource\RelationManagers;
 
-use Closure;
 use Filament\Forms;
-use App\Models\Post;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Filament\Resources\Resource;
-use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\RichEditor;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Columns\BooleanColumn;
-use App\Filament\Resources\PostResource\Pages;
-use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Filament\Resources\PostResource\RelationManagers;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use App\Filament\Resources\CategoryResource\RelationManagers\PostsRelationManager;
 
-class PostResource extends Resource
+class PostsRelationManager extends RelationManager
 {
-    protected static ?string $model = Post::class;
+    protected static string $relationship = 'posts';
 
-    protected static ?string $navigationIcon = 'heroicon-o-inbox-arrow-down';
-
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -57,43 +43,36 @@ class PostResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
                 TextColumn::make('id')->sortable(),
-                TextColumn::make('title')->limit('50')->sortable(),
-                TextColumn::make('content'),
-                IconColumn::make('is_published'),
-                SpatieMediaLibraryImageColumn::make('image')->collection('posts')
-                ->label('Image')  
-
+                TextColumn::make('name')->limit('50')->sortable(),
+                TextColumn::make('slug')->limit('50')
             ])
+            ->recordTitleAttribute('title')
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make()
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
-            ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListPosts::route('/'),
-            'create' => Pages\CreatePost::route('/create'),
-            'edit' => Pages\EditPost::route('/{record}/edit'),
-        ];
+            ])
+            ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]));
     }
 }

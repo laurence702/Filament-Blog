@@ -2,16 +2,20 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TagResource\Pages;
-use App\Filament\Resources\TagResource\RelationManagers;
 use App\Models\Tag;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Section;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\TagResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\TagResource\RelationManagers;
 
 class TagResource extends Resource
 {
@@ -23,7 +27,13 @@ class TagResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Section::make()->schema([
+                    TextInput::make('name')->reactive()
+                    ->afterStateUpdated(function ($set, $state) {
+                        $set('slug', Str::slug($state));
+                    })->required(),
+                    TextInput::make('slug')->required(),
+                ]),
             ]);
     }
 
@@ -31,7 +41,9 @@ class TagResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('id')->sortable(),
+                TextColumn::make('name')->limit('50')->sortable(),
+                TextColumn::make('slug')->limit('50')
             ])
             ->filters([
                 //
