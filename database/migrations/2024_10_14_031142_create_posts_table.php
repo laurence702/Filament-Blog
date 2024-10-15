@@ -19,6 +19,7 @@ return new class extends Migration
             $table->boolean('is_published')->default(false);
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

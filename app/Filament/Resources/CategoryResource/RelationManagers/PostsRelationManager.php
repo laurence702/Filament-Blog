@@ -71,8 +71,11 @@ class PostsRelationManager extends RelationManager
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ])
-            ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]));
+            ->modifyQueryUsing(fn (Builder $query) =>   
+                $query->withTrashed()
+            ); 
+            // ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
+            //     SoftDeletingScope::class,
+            // ]));
     }
 }

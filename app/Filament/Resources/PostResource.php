@@ -64,7 +64,7 @@ class PostResource extends Resource
                 TextColumn::make('id')->sortable(),
                 TextColumn::make('title')->limit('50')->sortable(),
                 TextColumn::make('content'),
-                IconColumn::make('is_published'),
+                IconColumn::make('is_published')->boolean(),
                 SpatieMediaLibraryImageColumn::make('image')->collection('posts')
                 ->label('Image')  
 

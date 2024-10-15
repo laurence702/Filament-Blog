@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Post extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia;
+    use SoftDeletes, HasFactory, InteractsWithMedia;
 
     protected $fillable = ['category_id', 'title', 'slug' ,'content' ,'is_published', 'image'];
 
