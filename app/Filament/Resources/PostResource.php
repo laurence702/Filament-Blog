@@ -42,7 +42,7 @@ class PostResource extends Resource
             ->schema([
                 Section::make()->schema([
                     Select::make('category_id')
-                    ->relationship('category', 'name'),
+                    ->relationship('category', 'name')->native(false),
 
                     TextInput::make('title')->reactive()
                         ->afterStateUpdated(function ($set, $state) {
